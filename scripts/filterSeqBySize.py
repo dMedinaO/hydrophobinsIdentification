@@ -18,13 +18,26 @@ def createExportFile(arraySequence, fileExport):
         index+=1
     fileOpen.close()
 
-#filtro que permite evaluar la cantidad de cys en la secuencia
+#filtro que permite evaluar la cantidad de doble enlace de cys en la secuencia
 def prefilterNumberCys(sequence):
+
+    cont=0
+    for i in range(len(sequence)-1):
+        if sequence[i] == 'C' and sequence[i+1] == 'C':
+            cont+=1
+    if cont>=2:
+        return 0#cumple con la cantidad minima
+    else:
+        return 1#no cumple con la cantidad minima
+
+#filtro que permite evaluar la cantidad de cys en la secuencia
+def prefIlterNumberCysElements(sequence):
 
     cont=0
     for i in range(len(sequence)):
         if sequence[i] == 'C':
             cont+=1
+
     if cont>=8:
         return 0#cumple con la cantidad minima
     else:
@@ -35,8 +48,8 @@ seqFilterBySize = []
 
 for record in SeqIO.parse(sys.argv[1], "fasta"):
 
-    if len(record.seq)<=250:
-        if prefilterNumberCys(record.seq) == 0:
+    if prefilterNumberCys(record.seq) == 0:
+        if prefIlterNumberCysElements(record.seq)==0:
             seqFilterBySize.append(record.seq)
 
 createExportFile(seqFilterBySize, 'sequenceBySize.fasta')
